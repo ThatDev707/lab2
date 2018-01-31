@@ -36,8 +36,9 @@ public class frame {
 					
 					throw2 = throwToSet;
 				}
-				
-				throw new IllegalThrowException("You cannot throw again on this frame");
+				else{
+					throw new IllegalThrowException("You cannot throw again on this frame");
+				}
 	}
 	
 	

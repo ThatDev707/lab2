@@ -11,36 +11,52 @@ public class ScoreSheet {
 		if(currentFrame >= 10){
 			throw new IllegalThrowException("There can only be 10 frames");
 		}
-		
-		frame f = new frame();
-		f.throwBall(throwToSet);
-		frames[currentFrame++] = f; 		
+
+		if(frames[currentFrame] != null && frames[currentFrame].isAwaitingThrow()){
+
+			frames[currentFrame].throwBall(throwToSet);
+		}
+		else{
+			frame f = new frame();
+			f.throwBall(throwToSet);
+
+			frames[currentFrame] = f;
+		}
+
+		if(!frames[currentFrame].isAwaitingThrow())
+		{
+			currentFrame++;
+		}
+
 	}
+
 	
 	public int getFrameScore(int frame) throws IllegalScoreException{
+		if(frame>=10){
+			throw new IllegalScoreException("This frame doesn't exist");
+		}
+
+		if(frames[frame] == null){
+			return 0;
+		}
+
 		int score = frames[frame].pinsKnockedDown();
 		
 		if(frames[frame].isStrike()){
-			if(frames[frame + 1] == null || frames[frame + 1].isAwaitingThrow()){
-				throw new IllegalScoreException("No Data on the next frame");
-			}
-			
-			score += getFrameScore(frame + 1);
 
-			if(frames[frame + 2] == null || frames[frame + 2].isAwaitingThrow()){
-				throw new IllegalScoreException("No Data on the next frame");
+			if(frame +1 < 10 && frames[frame + 1] != null){
+				score += frames[frame + 1].pinsKnockedDown();
 			}
-			
-			score += getFrameScore(frame + 2);
-			
+
+			if(frame +2 < 10 && frames[frame + 2] != null){
+				score += frames[frame + 2].pinsKnockedDown();
+			}
+
 		}
 		else if(frames[frame].isSpare()){
-
-			if(frames[frame + 1] == null  || frames[frame + 1].isAwaitingThrow()){
-				throw new IllegalScoreException("No Data on the next frame");
+			if(frame +1 < 10 && frames[frame + 1] != null){
+				score += frames[frame + 1].pinsKnockedDown();
 			}
-			
-			score += getFrameScore(frame + 1);
 		}
 		
 		return score;
